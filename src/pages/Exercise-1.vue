@@ -45,12 +45,18 @@
 
     <!-- You may modify any code beneath this line -->
     <div class="exercise-1__results">
-      <InboxList :messages="messagingStore.messages" />
+      <InboxList
+        accent-color="#228B22"
+        :avatar="avatar"
+        :messages="messagingStore.messages"
+        title="My Inbox"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+  import avatar from '@/assets/avatar.gif'
   import InboxList from '@/components/Exercise-1/InboxList.vue'
   import InfoBox from '@/components/InfoBox.vue'
   import { useMessagingStore } from '@/stores/messaging'

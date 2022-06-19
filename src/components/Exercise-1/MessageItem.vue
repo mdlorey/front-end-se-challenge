@@ -19,10 +19,14 @@
 
 <script lang="ts" setup>
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import { computed, PropType } from 'vue'
+  import { computed, PropType, toRefs } from 'vue'
   import { Message } from '@/types/Exercise-1/Message'
 
   const props = defineProps({
+    accentColor: {
+      type: String,
+      default: '#76d7c4',
+    },
     message: {
       type: Object as PropType<Message>,
       required: true,
@@ -31,6 +35,8 @@
       type: Boolean,
     },
   })
+
+  const { accentColor } = toRefs(props)
 
   const emit = defineEmits<{
     (event: 'update:selected', value: boolean): void,
@@ -72,7 +78,7 @@
 }
 
 .message-item--selected .message-item__from {
-  color: #76d7c4;
+  color: v-bind(accentColor);
 }
 
 .message-item__checkbox {

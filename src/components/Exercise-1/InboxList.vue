@@ -2,6 +2,12 @@
   <div class="inbox-list">
     <div class="inbox-list__top-bar">
       <div class="inbox-list__title">
+        <img
+          v-if="avatar"
+          alt="Avatar"
+          class="inbox-list__title-avatar"
+          :src="avatar"
+        >
         {{ selectedMessagesLabel }}
       </div>
       <div class="inbox-list__actions">
@@ -14,6 +20,7 @@
       <MessageItem
         v-for="message in messages"
         :key="message.id"
+        :accent-color="accentColor"
         :message="message"
         :selected="selectedMessages.includes(message)"
         @update:selected="toggleSelection(message, $event)"
@@ -25,22 +32,36 @@
 
 <script lang="ts" setup>
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import { computed, PropType, reactive } from 'vue'
+  import { computed, PropType, reactive, toRefs } from 'vue'
   import MessageItem from '@/components/Exercise-1/MessageItem.vue'
   import { Message } from '@/types/Exercise-1/Message'
 
-  defineProps({
+  const props = defineProps({
+    accentColor: {
+      type: String,
+      default: '#76d7c4',
+    },
+    avatar: {
+      type: String,
+      default: undefined,
+    },
     messages: {
       type: Array as PropType<Message[]>,
       default: () => [],
     },
+    title: {
+      type: String,
+      default: 'Inbox',
+    },
   })
+
+  const { accentColor, title } = toRefs(props)
 
   const selectedMessages: Message[] = reactive([])
 
   const selectedMessagesLabel = computed(() => selectedMessages.length
     ? `${selectedMessages.length} ${toPlural('message', selectedMessages.length)} selected`
-    : 'Inbox')
+    : title.value)
 
   function toPlural(word: string, count: number): string {
     return count === 1 ? word : `${word}s`
@@ -79,7 +100,7 @@
   display: flex;
   align-items: center;
   color: white;
-  background-color: #76d7c4;
+  background-color: v-bind(accentColor);
   box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
     0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
   height: 64px;
@@ -95,5 +116,9 @@
 .inbox-list__title {
   font-size: 1.5em;
   font-weight: bold;
+
+  &-avatar {
+    max-height: 20px;
+  }
 }
 </style>
