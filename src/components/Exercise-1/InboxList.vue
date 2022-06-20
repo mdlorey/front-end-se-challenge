@@ -11,6 +11,11 @@
         {{ selectedMessagesLabel }}
       </div>
       <div class="inbox-list__actions">
+        <FontAwesomeIcon
+          class="fa-lg"
+          :icon="['fas', 'eye']"
+          @click.prevent="showMessagePreview = !showMessagePreview"
+        />
         <FontAwesomeIcon class="fa-lg" :icon="['fas', 'search']" />
         <FontAwesomeIcon class="fa-lg" :icon="['fas', 'ellipsis-v']" />
       </div>
@@ -23,6 +28,7 @@
         :accent-color="accentColor"
         :message="message"
         :selected="selectedMessages.includes(message)"
+        :show-message-preview="showMessagePreview"
         @update:selected="toggleSelection(message, $event)"
       />
     </div>
@@ -32,7 +38,7 @@
 
 <script lang="ts" setup>
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import { computed, PropType, reactive, toRefs } from 'vue'
+  import { computed, PropType, reactive, ref, toRefs } from 'vue'
   import MessageItem from '@/components/Exercise-1/MessageItem.vue'
   import { Message } from '@/types/Exercise-1/Message'
 
@@ -56,6 +62,8 @@
   })
 
   const { accentColor, title } = toRefs(props)
+
+  let showMessagePreview = ref(false)
 
   const selectedMessages: Message[] = reactive([])
 
@@ -111,6 +119,10 @@
 .inbox-list__actions {
   display: flex;
   gap: 24px;
+
+  .svg-inline--fa {
+    cursor: pointer;
+  }
 }
 
 .inbox-list__title {

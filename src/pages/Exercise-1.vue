@@ -46,7 +46,7 @@
     <!-- You may modify any code beneath this line -->
     <div class="exercise-1__results">
       <InboxList
-        accent-color="#228B22"
+        accent-color="#B9314F"
         :avatar="avatar"
         :messages="messagingStore.messages"
         title="My Inbox"

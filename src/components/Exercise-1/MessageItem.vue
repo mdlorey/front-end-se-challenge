@@ -5,11 +5,17 @@
     </div>
     <div>
       <div class="message-item__from">
+        <span v-if="message.urgent" class="message-item__tag">Urgent</span>
         {{ message.from }}
       </div>
       <div class="message-item__subject">
         {{ message.subject }}
       </div>
+      <Transition>
+        <div v-if="showMessagePreview" class="message-item__message">
+          {{ message.message }}
+        </div>
+      </Transition>
     </div>
     <div class="message-item__timestamp">
       {{ message.timestamp }}
@@ -32,6 +38,9 @@
       required: true,
     },
     selected: {
+      type: Boolean,
+    },
+    showMessagePreview: {
       type: Boolean,
     },
   })
@@ -81,6 +90,15 @@
   color: v-bind(accentColor);
 }
 
+.message-item__tag {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  color: white;
+  background-color: v-bind(accentColor);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
 .message-item__checkbox {
   margin: 24px 24px 24px 0;
 }
@@ -88,6 +106,7 @@
 .message-item__from {
   color: #2c3e50;
   font-weight: bold;
+  margin-bottom: 0.3rem;
   transition: all 250ms;
 }
 
@@ -97,6 +116,20 @@
 
 .message-item__timestamp {
   font-size: 0.75rem;
+  text-align: right;
   margin-left: auto;
+  min-width: 60px;
+}
+
+.v-enter-active,
+.v-leave-active {
+  max-height: 132px;
+  transition: all 0.5s ease-in-out;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
+  max-height: 0px;
 }
 </style>
