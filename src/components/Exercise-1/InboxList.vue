@@ -12,6 +12,12 @@
       </div>
       <div class="inbox-list__actions">
         <FontAwesomeIcon
+          v-if="selectedMessages.length > 0"
+          class="fa-lg"
+          :icon="['fas', 'trash-can']"
+          @click.prevent="deleteSelectedMessages"
+        />
+        <FontAwesomeIcon
           class="fa-lg"
           :icon="['fas', 'eye']"
           @click.prevent="showMessagePreview = !showMessagePreview"
@@ -40,7 +46,10 @@
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
   import { computed, PropType, reactive, ref, toRefs } from 'vue'
   import MessageItem from '@/components/Exercise-1/MessageItem.vue'
+  import { useMessagingStore } from '@/stores/messaging'
   import { Message } from '@/types/Exercise-1/Message'
+
+  const messagingStore = useMessagingStore()
 
   const props = defineProps({
     accentColor: {
@@ -93,6 +102,13 @@
     if (index > -1) {
       selectedMessages.splice(index, 1)
     }
+  }
+
+  function deleteSelectedMessages(): void {
+    // remove the selected messages from store
+    messagingStore.remove(selectedMessages)
+    // clear local selected messages
+    selectedMessages.splice(0, selectedMessages.length)
   }
 </script>
 

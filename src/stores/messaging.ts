@@ -101,4 +101,9 @@ export const useMessagingStore = defineStore('messaging', {
       },
     ],
   }),
+  actions: {
+    remove(messages: Message[]): void {
+      this.messages = this.messages.filter(ar => !messages.find(rm => rm.id === ar.id))
+    },
+  },
 })
