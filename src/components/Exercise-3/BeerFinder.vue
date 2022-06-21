@@ -2,7 +2,7 @@
   <div class="beer-finder">
     <h3 class="beer-finder__title">
       <FontAwesomeIcon class="beer-finder__logo" :icon="['fas', 'beer-mug-empty']" />
-      Find Beer Near Me
+      Beer Me!
     </h3>
     <div v-if="breweries.length < 1" class="beer-finder__search-button">
       <RippleButton @click="search">
@@ -10,10 +10,31 @@
       </RippleButton>
     </div>
     <div class="beer-finder__breweries">
-      <template v-for="brewery in breweries" :key="brewery.d">
+      <template v-for="(brewery, index) in breweries" :key="brewery.d">
         <div class="beer-finder__brewery">
-          Distance: {{ distance(brewery.latitude, brewery.longitude) }} miles
-          {{ brewery }}
+          <div class="beer-finder__distance">
+            {{ distance(parseFloat(brewery.latitude), parseFloat(brewery.longitude)) }} miles
+          </div>
+          <div class="beer-finder__type">
+            {{ brewery.brewery_type }}
+          </div>
+          <div class="beer-finder__details">
+            <h3 class="beer-finder__brewery-name">
+              <a v-if="brewery.website_url" :href="brewery.website_url" target="_blank">{{ brewery.name }}</a>
+              <template v-else>
+                {{ brewery.name }}
+              </template>
+            </h3>
+            <div class="beer-finder__brewery-address">
+              <a :href="googleDirectionsLink(index)" target="_blank">{{ brewery.street }}</a>
+            </div>
+            <div class="beer-finder__brewery-address2">
+              <a :href="googleDirectionsLink(index)" target="_blank">{{ brewery.city }}, {{ brewery.state }}, {{ brewery.postal_code.split('-')[0] }}</a>
+            </div>
+            <div v-if="brewery.phone" class="beer-finder__brewery-phone">
+              {{ formatPhoneNumber(brewery.phone) }}
+            </div>
+          </div>
         </div>
       </template>
     </div>
@@ -100,7 +121,26 @@
     dist = Math.acos(dist)
     dist = dist * 180/Math.PI
     dist = dist * 60 * 1.1515
+
     return Math.round(dist * 10) / 10
+  }
+
+  function googleDirectionsLink(index: number): string {
+    const { street, city, state, postal_code } = breweries[index]
+    let url = 'https://www.google.com/maps/dir//&'
+    url = `${url}${encodeURI(`${street.replaceAll(' ', '+')},+${city},+${state},+${postal_code}`)}`
+
+    return url
+  }
+
+  function formatPhoneNumber(phone: string): string {
+    let cleaned = `${phone}`.replace(/\D/g, '')
+    let match = cleaned.match(/^(\d{3})(\d{3})(\d{4})$/)
+    if (match) {
+      return `(${match[1]}) ${match[2]}-${match[3]}`
+    }
+
+    return ''
   }
 </script>
 
