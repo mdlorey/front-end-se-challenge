@@ -55,13 +55,13 @@
 
     <!-- You may modify any code beneath this line -->
     <div class="exercise-3__results">
-      <SOExample />
+      <BeerFinder />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-  import SOExample from '@/components/Exercise-3/SOExample.vue'
+  import BeerFinder from '@/components/Exercise-3/BeerFinder.vue'
   import InfoBox from '@/components/InfoBox.vue'
 </script>
 
