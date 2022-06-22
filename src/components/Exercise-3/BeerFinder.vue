@@ -12,11 +12,14 @@
     <div class="beer-finder__breweries">
       <template v-for="(brewery, index) in breweries" :key="brewery.d">
         <div class="beer-finder__brewery">
-          <div class="beer-finder__distance">
-            {{ distance(parseFloat(brewery.latitude), parseFloat(brewery.longitude)) }} miles
-          </div>
-          <div class="beer-finder__type">
-            {{ brewery.brewery_type }}
+          <div class="beer-finder__image">
+            <div class="beer-finder__distance">
+              {{ distance(parseFloat(brewery.latitude), parseFloat(brewery.longitude)) }} miles
+            </div>
+            <img src="https://placebeer.com/600/400">
+            <div class="beer-finder__type">
+              {{ brewery.brewery_type }}
+            </div>
           </div>
           <div class="beer-finder__details">
             <h3 class="beer-finder__brewery-name">
@@ -147,6 +150,7 @@
 <style lang="scss">
 .beer-finder {
   padding: 24px 12px;
+  background-color: #f7f8fc;
 }
 
 .beer-finder__title {
@@ -156,9 +160,84 @@
 
 .beer-finder__search-button {
   text-align: center;
+
   .ripple-button {
     width: auto;
   }
+}
 
+.beer-finder__breweries {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  grid-auto-rows: minmax(100px, auto);
+}
+
+.beer-finder__brewery {
+  display: flex;
+  flex-direction: column;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+
+  img {
+    object-fit: cover;
+    width: 100%;
+    max-height: 100%;
+  }
+}
+
+.beer-finder__image {
+  position: relative;
+}
+
+.beer-finder__distance {
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  font-weight: bolder;
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  color: white;
+  background-color: #81b29a;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.beer-finder__type {
+  text-transform: uppercase;
+  font-weight: bolder;
+  position: absolute;
+  bottom: 20px;
+  left: 15px;
+  color: white;
+  background-color: #e07a5f;
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.beer-finder__details {
+  color: #3d405b;
+  padding: 15px;
+
+  a {
+    color: #05668d;
+  }
+}
+
+.beer-finder__brewery-name {
+  margin: 0 0 0.5rem;
+}
+
+.beer-finder__brewery-address,
+.beer-finder__brewery-address2 {
+  a {
+    text-decoration: none;
+  }
+}
+
+.beer-finder__brewery-phone {
+  font-weight: bolder;
+  margin-top: 0.5rem;
 }
 </style>
