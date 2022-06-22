@@ -29,10 +29,6 @@
   import { Message } from '@/types/Exercise-1/Message'
 
   const props = defineProps({
-    accentColor: {
-      type: String,
-      default: '#76d7c4',
-    },
     message: {
       type: Object as PropType<Message>,
       required: true,
@@ -40,12 +36,16 @@
     selected: {
       type: Boolean,
     },
+    selectedColor: {
+      type: String,
+      default: '#76d7c4',
+    },
     showMessagePreview: {
       type: Boolean,
     },
   })
 
-  const { accentColor } = toRefs(props)
+  const { selectedColor } = toRefs(props)
 
   const emit = defineEmits<{
     (event: 'update:selected', value: boolean): void,
@@ -87,14 +87,14 @@
 }
 
 .message-item--selected .message-item__from {
-  color: v-bind(accentColor);
+  color: v-bind(selectedColor);
 }
 
 .message-item__tag {
   font-size: 0.7rem;
   text-transform: uppercase;
   color: white;
-  background-color: v-bind(accentColor);
+  background-color: v-bind(selectedColor);
   padding: 4px 8px;
   border-radius: 4px;
 }

@@ -31,7 +31,7 @@
       <MessageItem
         v-for="message in messages"
         :key="message.id"
-        :accent-color="accentColor"
+        :selected-color="selectedColor"
         :message="message"
         :selected="selectedMessages.includes(message)"
         :show-message-preview="showMessagePreview"
@@ -52,10 +52,6 @@
   const messagingStore = useMessagingStore()
 
   const props = defineProps({
-    accentColor: {
-      type: String,
-      default: '#76d7c4',
-    },
     avatar: {
       type: String,
       default: undefined,
@@ -64,13 +60,21 @@
       type: Array as PropType<Message[]>,
       default: () => [],
     },
+    selectedColor: {
+      type: String,
+      default: '#76d7c4',
+    },
     title: {
       type: String,
       default: 'Inbox',
     },
+    titleColor: {
+      type: String,
+      default: '#76d7c4',
+    },
   })
 
-  const { accentColor, title } = toRefs(props)
+  const { title, titleColor } = toRefs(props)
 
   let showMessagePreview = ref(false)
 
@@ -124,7 +128,7 @@
   display: flex;
   align-items: center;
   color: white;
-  background-color: v-bind(accentColor);
+  background-color: v-bind(titleColor);
   box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2),
     0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
   height: 64px;
