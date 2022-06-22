@@ -1,3 +1,4 @@
+import { plugin, defaultConfig } from '@formkit/vue'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { faStackOverflow } from '@fortawesome/free-brands-svg-icons'
 import { faSquare, faSquareCheck } from '@fortawesome/free-regular-svg-icons'
@@ -27,5 +28,6 @@ const app = createApp(App)
   .use(router)
   .use(pinia)
   .use(VueLoading)
+  .use(plugin, defaultConfig)
 
 app.mount('#app')

@@ -5,6 +5,10 @@
       Beer Me!
     </h3>
     <div v-if="breweries.length < 1" class="beer-finder__search-button">
+      <div v-if="showStates" class="beer-finder__state">
+        <h4>Geolocation is not enabled, try again with your state</h4>
+        <FormKit v-model="state" type="select" name="state" :options="states" placeholder="Select a state" />
+      </div>
       <RippleButton @click="search">
         Find Breweries Near Me
       </RippleButton>
@@ -13,7 +17,7 @@
       <template v-for="(brewery, index) in breweries" :key="brewery.d">
         <div class="beer-finder__brewery">
           <div class="beer-finder__image">
-            <div class="beer-finder__distance">
+            <div v-if="latitude && longitude" class="beer-finder__distance">
               {{ distance(parseFloat(brewery.latitude), parseFloat(brewery.longitude)) }} miles
             </div>
             <img src="https://placebeer.com/600/400">
@@ -46,7 +50,7 @@
 
 <script lang="ts" setup>
   import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-  import { reactive } from 'vue'
+  import { reactive, ref } from 'vue'
   import { ActiveLoader, useLoading } from 'vue-loading-overlay'
   import RippleButton from '@/components/RippleButton.vue'
 
@@ -76,32 +80,56 @@
   let loader: ActiveLoader
   let latitude: number
   let longitude: number
+  const state = ref('')
+  const showStates = ref(false)
+  const states = ['Alabama', 'Alaska', 'Arizona', 'Arkansas', 'California', 'Colorado', 'Connecticut', 'Delaware', 'District of Columbia', 'Florida', 'Georgia', 'Guam', 'Hawaii', 'Idaho', 'Illinois', 'Indiana', 'Iowa', 'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts', 'Michigan', 'Minnesota', 'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire', 'New Jersey', 'New Mexico', 'New York', 'North Carolina', 'North Dakota', 'Ohio', 'Oklahoma', 'Oregon', 'Pennsylvania', 'Rhode Island', 'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont', 'Virginia', 'Washington', 'West Virginia', 'Wisconsin', 'Wyoming']
 
-  async function search(): Promise<void> {
+  function search(): void {
     // get latitude and longitude if they are not already available
     if (!latitude && !longitude) {
-      loader = $loading.show()
-      const { lat, long } = await getCoords()
-      latitude = lat
-      longitude = long
+      if (showStates.value && state.value) {
+        getLocalBreweries()
+      } else {
+        loader = $loading.show()
+        getLocation()
+      }
+    } else {
+      getLocalBreweries()
     }
-    getLocalBreweries()
   }
 
-  async function getCoords(): Promise<{ lat: number, long: number }> {
-    const { coords: { latitude: lat, longitude: long } }: GeolocationPosition
-      = await new Promise((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(
-          (position) => resolve(position),
-          (error) => reject(error),
-        )
-      })
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function getCoordsPromise(): Promise<any> {
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => resolve(position),
+        (error) => reject(error),
+      )
+    })
+  }
 
-    return { lat, long }
+  function getLocation(): void {
+    getCoordsPromise()
+      .then(({ coords: { latitude: lat, longitude: long } }) => {
+        latitude = lat
+        longitude = long
+        getLocalBreweries()
+      })
+      .catch(() => {
+        loader.hide()
+        showStates.value = true
+      })
   }
 
   async function getLocalBreweries(): Promise<void> {
-    const url = `${baseUrl}?by_dist=${latitude},${longitude}&per_page=10`
+    const perPage = 10
+    let url = `${baseUrl}?by_dist=${latitude},${longitude}`
+    if (showStates.value) {
+      url = `${baseUrl}?by_state=${encodeURIComponent(state.value)}`
+    }
+    url = `${url}&per_page=${perPage}`
+    console.log(url)
+
     const response = await fetch(url)
     const data = await response.json()
     loader.hide()
@@ -131,7 +159,11 @@
   function googleDirectionsLink(index: number): string {
     const { street, city, state, postal_code } = breweries[index]
     let url = 'https://www.google.com/maps/dir//&'
-    url = `${url}${encodeURI(`${street.replaceAll(' ', '+')},+${city},+${state},+${postal_code}`)}`
+    let escapedStreet = ''
+    if (street) {
+      escapedStreet = street.replaceAll(' ', '+')
+    }
+    url = `${url}${encodeURI(`${escapedStreet},+${city},+${state},+${postal_code}`)}`
 
     return url
   }
@@ -156,6 +188,20 @@
 .beer-finder__title {
   margin-top: 0;
   text-align: center;
+}
+
+.beer-finder__state {
+  margin-bottom: 1rem;
+
+  h4 {
+    margin-bottom: 0.5rem;
+  }
+
+  input {
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+  }
 }
 
 .beer-finder__search-button {
