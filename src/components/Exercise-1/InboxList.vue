@@ -23,13 +23,19 @@
           @click.prevent="showMessagePreview = !showMessagePreview"
         />
         <FontAwesomeIcon class="fa-lg" :icon="['fas', 'search']" />
+        <FormKit
+          v-model="search"
+          type="text"
+          name="search"
+          placeholder="Search..."
+        />
         <FontAwesomeIcon class="fa-lg" :icon="['fas', 'ellipsis-v']" />
       </div>
     </div>
 
     <div class="inbox-list__messages">
       <MessageItem
-        v-for="message in messages"
+        v-for="message in filteredMessages"
         :key="message.id"
         :selected-color="selectedColor"
         :message="message"
@@ -74,9 +80,19 @@
     },
   })
 
-  const { title, titleColor } = toRefs(props)
+  const { messages, title, titleColor } = toRefs(props)
 
   let showMessagePreview = ref(false)
+
+  const search = ref('')
+
+  // A user can filter the list of messages in the inbox by typing into an input field.
+  // Messages should be filtered on subject, message contents, and sender
+  const filteredMessages = computed(() => {
+    return messages.value.filter((message) => {
+      return message.subject.includes(search.value) || message.message.includes(search.value) || message.from.includes(search.value)
+    })
+  })
 
   const selectedMessages: Message[] = reactive([])
 
