@@ -1,7 +1,6 @@
 <template>
   <div id="app" class="app">
     <div class="app__heading">
-      <img alt="Prefect logo" class="app__heading-logo" src="@/assets/logo.svg">
       <h2>
         Front End Software Engineer Challenge
       </h2>
